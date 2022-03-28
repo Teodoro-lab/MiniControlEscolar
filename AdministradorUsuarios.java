@@ -19,19 +19,44 @@ public class AdministradorUsuarios {
             }
         }
 
-        throw new UsuarioInexistenteException();
+        return false;
     }
 
-    public boolean registrarLoginIncorrecto(String usuario){
-        
+    public void registrarLoginIncorrecto(String usuario){
+        public boolean existe(String usuario){
+        Usuario currentUsuario;
+        for(int i = 0; i < usuarios.length; i++){
+            currentUsuario = usuarios[i];
+            if (currentUsuario.getUsername().equals(usuario))){
+                currentUsuario.disminuirOportunidadesLogin();
+                return;
+            }
+        }
+    }
     }
 
-    public boolean esUsuarioBloqueado(){
+    public boolean esUsuarioBloqueado(String usuario){
+        Usuario currentUsuario;
+        for(int i = 0; i < usuarios.length; i++){
+            currentUsuario = usuarios[i];
+            if (currentUsuario.getUsername().equals(usuario))){
+                return currentUsuario.isBlocked();
+            }
+        }
+    }
 
+    public boolean existe(String usuario){
+        Usuario currentUsuario;
+        for(int i = 0; i < usuarios.length; i++){
+            currentUsuario = usuarios[i];
+            if (currentUsuario.getUsername().equals(usuario))){
+                return currentUsuario.isBlocked();
+            }
+        }
     }
 
     public convertirUsuarioAInfo(){
-
+        
     }
 
     private Usuario[] crearArrayUsuarios(String[][] usuariosInfo){

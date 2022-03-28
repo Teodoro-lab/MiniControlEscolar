@@ -5,6 +5,7 @@ import java.util.date;
 
 public class Usuario{
     private static int numOportunidadesPorDefecto = 3;
+    private static time 
 
     private String username;
     private String password;
@@ -23,6 +24,10 @@ public class Usuario{
         numOportunidadesLogin = numOportunidadesPorDefecto;
     }
 
+    public boolean isBlocked(){
+        return (0 >= numOportunidadesLogin);
+    }
+
     public String getUsername() {
         return username;
     }
@@ -38,8 +43,5 @@ public class Usuario{
     public void setPassword(String password){
         this.password = EncriptadorAES.encrypt(password);
     }
-
-    
-
 
 }
