@@ -11,8 +11,9 @@ import javax.crypto.spec.SecretKeySpec;
  
 public class EncriptadorAES {
  
-    private static SecretKeySpec secretKey = "tEO___WIskUcHYALaTaaaKE";
+    private static SecretKeySpec secretKey;
     private static byte[] key;
+    public static String secret = "tEO___WIskUcHYALaTaaaKE";
  
     public static void setKey(String myKey) 
     {

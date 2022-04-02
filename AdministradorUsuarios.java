@@ -14,54 +14,55 @@ public class AdministradorUsuarios {
 
         for(int i = 0; i < usuarios.length; i++){
             currentUsuario = usuarios[i];
-            if (currentUsuario.equals(usuarioToValidate)){}
+            if (currentUsuario.equals(usuarioToValidate)){
                 return true;
             }
         }
-
         return false;
     }
 
     public void registrarLoginIncorrecto(String usuario){
-        public boolean existe(String usuario){
         Usuario currentUsuario;
         for(int i = 0; i < usuarios.length; i++){
             currentUsuario = usuarios[i];
-            if (currentUsuario.getUsername().equals(usuario))){
+            if (currentUsuario.getUsername().equals(usuario)){
                 currentUsuario.disminuirOportunidadesLogin();
                 return;
             }
         }
-    }
     }
 
     public boolean esUsuarioBloqueado(String usuario){
         Usuario currentUsuario;
         for(int i = 0; i < usuarios.length; i++){
             currentUsuario = usuarios[i];
-            if (currentUsuario.getUsername().equals(usuario))){
+            if (currentUsuario.getUsername().equals(usuario)){
                 return currentUsuario.isBlocked();
             }
         }
+        return false;
     }
 
     public boolean existe(String usuario){
         Usuario currentUsuario;
         for(int i = 0; i < usuarios.length; i++){
             currentUsuario = usuarios[i];
-            if (currentUsuario.getUsername().equals(usuario))){
+            if (currentUsuario.getUsername().equals(usuario)){
                 return currentUsuario.isBlocked();
             }
         }
+        return false;
     }
 
-    public convertirUsuarioAInfo(){
-        
+    public void convertirUsuarioAInfo(){
+        System.out.println("holi");
     }
 
     private Usuario[] crearArrayUsuarios(String[][] usuariosInfo){
-        usuarios = new Usuario[usuariosInfo.length];
+        Usuario[] usuarios = new Usuario[usuariosInfo.length];
 
+        String[] usuarioInfo;
+        String usuarioName, usuarioPassword;
         for (int i = 0; i < usuarios.length; i++){
             usuarioInfo = usuariosInfo[i];
             usuarioName = usuarioInfo[0];
@@ -69,6 +70,7 @@ public class AdministradorUsuarios {
 
             usuarios[i] = new Usuario(usuarioName, usuarioPassword);
         }
-    }
 
+        return usuarios;
+    }
 }

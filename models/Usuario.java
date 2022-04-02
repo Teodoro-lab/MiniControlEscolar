@@ -1,11 +1,9 @@
 package models;
 
 import utils.EncriptadorAES;
-import java.util.date;
 
 public class Usuario{
     private static int numOportunidadesPorDefecto = 3;
-    private static time 
 
     private String username;
     private String password;
@@ -13,7 +11,7 @@ public class Usuario{
 
     public Usuario(String username, String password){
         this.username = username;
-        this.password = setPassword(password);
+        setPassword(password);
     }
 
     public void disminuirOportunidadesLogin(){
@@ -41,7 +39,7 @@ public class Usuario{
     }
 
     public void setPassword(String password){
-        this.password = EncriptadorAES.encrypt(password);
+        this.password = EncriptadorAES.encrypt(password, EncriptadorAES.secret);
     }
 
 }

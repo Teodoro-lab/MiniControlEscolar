@@ -1,11 +1,19 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class ManagerArchivo{
     
-    public boolean validarEstructuraArchivo(String path, String name, int elementos, char separador){
-        BufferedReader br = new BufferedReader(new FileReader(file));
+    public boolean validarEstructuraArchivo(String path, String name, int elementos, String separador) throws IOException{
+        BufferedReader br = new BufferedReader(new FileReader(path + name));
         String st;
 
         while ((st = br.readLine()) != null){
-            String[] tokens = st.split(separator);
+            String[] tokens = st.split(separador);
             if (tokens.length != elementos){
                 return false;
             }
@@ -22,12 +30,12 @@ public class ManagerArchivo{
        return false;
     }
 
-    public String[][] leerArchivoUsuarios(String path, String name, int elementos, char separador){
-        BufferedReader br = new BufferedReader(new FileReader(file));
+    public String[][] leerArchivoUsuarios(String path, String name, int elementos, String separador) throws IOException{
+        BufferedReader br = new BufferedReader(new FileReader(path + name));
         String st;
 
-        int fileLength = countFileLines(path, name);
-        String[][] result = new String[fileLength][];
+        long fileLength = countFileLines(path, name);
+        String[][] result = new String[(int)fileLength][];
 
         int currentLine = 0;
         while ((st = br.readLine()) != null){
@@ -42,11 +50,11 @@ public class ManagerArchivo{
 
     }
 
-    private int countFileLines(String path, String nombre){
-        Path path = Paths.get(path + nombre);
-        int lines = 0;
+    private long countFileLines(String path, String nombre){
+        Path filePath = Paths.get(path + nombre);
+        long lines = 0;
         try {
-            lines = Files.lines(path).count();
+            lines = Files.lines(filePath).count();
 
         } catch (IOException e) {
             e.printStackTrace();

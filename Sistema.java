@@ -1,48 +1,57 @@
+import java.io.IOException;
+import java.util.Scanner;
+
+import exceptions.UsuarioInexistenteException;
 import models.Usuario;
 
 public class Sistema{
-    private AdministradorUsuarios admnistradorUsuarios; 
+    private AdministradorUsuarios administradorUsuarios; 
     private ManagerArchivo managerArchivo = new ManagerArchivo();
     
     private final String rutaArchivoUsuarios = "./";
-    private final String nombreArchivoUsuarios = "usuarios.txt"
+    private final String nombreArchivoUsuarios = "usuarios.txt";
 
     public Sistema() {
-        boolean esArchivoCorrecto = verificarArchivoUsuario;
-        if (esArchivoCorrecto){
-            cargarUsuarios();
-            mostrarInterfazUsuario();
-        } else {
-            //Cambiar nombre para que sea correcto
-            alertaArchivoUsuariosNoExiste();
+        boolean esArchivoCorrecto;
+        try {
+            esArchivoCorrecto = verificarArchivoUsuario();
+            if (esArchivoCorrecto) {
+                cargarUsuarios();
+                mostrarInterfazUsuario();
+            } else {
+                // Cambiar nombre para que sea correcto
+                alertaArchivoUsuariosNoExiste();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
-    public boolean verificarArchivoUsuario(){
-        existeArchivo = managerArchivo.verificarExistenciaArchivo(
+    public boolean verificarArchivoUsuario() throws IOException{
+        boolean existeArchivo = managerArchivo.verificarExistenciaArchivo(
             rutaArchivoUsuarios, nombreArchivoUsuarios
         );
         
-        estructuraCorrecta = managerArchivo.validarEstructuraArchivo(
-            rutaArchivoUsuarios, nombreArchivoUsuarios
+        //WARNING: está hardcodeado -> arreglar if possible
+        boolean estructuraCorrecta = managerArchivo.validarEstructuraArchivo(
+            rutaArchivoUsuarios, nombreArchivoUsuarios, 4, ","
         );
         
         return (existeArchivo && estructuraCorrecta);
     }
     
-    public void ingresarUsuarioContra(){
+    public void ingresarUsuarioContra() throws UsuarioInexistenteException{
         Scanner sc = new Scanner(System.in);
         System.out.println("Ingrese su nombre de usuario");
-        usuario = sc.nextLine();
+        String usuario = sc.nextLine();
         System.out.println("Ingrese su contraseña");
-        contrasena = sc.nextLine();
+        String contrasena = sc.nextLine();
 
         boolean usuarioValido = verificarUsuarioContra(usuario, contrasena);
 
     }
     
-    public boolean verificarUsuarioContra(String usuario, String contra){
+    public boolean verificarUsuarioContra(String usuario, String contra) throws UsuarioInexistenteException{
         boolean existeUsuario = administradorUsuarios.existe(usuario);
           
         boolean usuarioBloqueado;
@@ -55,7 +64,7 @@ public class Sistema{
 
         boolean autenticado;
         if (!usuarioBloqueado){
-            autenticado = administradorUsuarios.autenticarUsuario(usuario, contrasena);
+            autenticado = administradorUsuarios.autenticarUsuario(usuario, contra);
         } else{
             alertaUsuarioContraIncorrectos();
             return false;
@@ -81,14 +90,18 @@ public class Sistema{
 
     private void cargarUsuarios(){
         String separator = ",";
-        String[][] usuariosInfo = managerArchivo.leerArchivoUsuarios(
-            rutaArchivoUsuarios, 
-            nombreArchivoUsuarios,
-            User.getDeclaredFields().length,
-            separator
-            )
-
-        administradorUsuarios = new AdministradorUsuarios(usuariosInfo);
+        String[][] usuariosInfo;
+        try {
+            usuariosInfo = managerArchivo.leerArchivoUsuarios(
+                rutaArchivoUsuarios, 
+                nombreArchivoUsuarios,
+                4,
+                separator
+            );
+            administradorUsuarios = new AdministradorUsuarios(usuariosInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     private void alertaArchivoUsuariosNoExiste(){
