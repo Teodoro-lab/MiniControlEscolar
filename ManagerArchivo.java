@@ -1,10 +1,13 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class ManagerArchivo{
     
@@ -41,12 +44,48 @@ public class ManagerArchivo{
         while ((st = br.readLine()) != null){
             String[] userInfo = st.split(separador);
             result[currentLine] = userInfo;
+            currentLine++;
         }
 
+        br.close();
         return result;
     }
 
-    public void updateLine(int line, String info){
+    public void updateLine(String name, String path, int line, String info) throws FileNotFoundException{
+
+        String filePath = path + name;
+        Scanner sc = new Scanner(new File(filePath));
+        StringBuffer buffer = new StringBuffer();
+
+        int index = 0;
+        String oldLine = "";
+        while (sc.hasNextLine()) {
+
+            String nextLine = sc.nextLine();
+            buffer.append(nextLine + System.lineSeparator());
+
+            if(index == line) {
+                oldLine = nextLine;
+            }
+            index++;
+        }
+
+        String fileContents = buffer.toString();
+        System.out.println("Contents of the file: " + fileContents);
+
+        sc.close();
+
+        fileContents = fileContents.replaceAll(oldLine, info);
+
+        try {
+            FileWriter writer = new FileWriter(filePath);
+            writer.append(fileContents);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
 
     }
 

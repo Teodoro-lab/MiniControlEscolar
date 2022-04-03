@@ -1,21 +1,37 @@
 package models;
 
 import utils.EncriptadorAES;
+import java.util.Date;
+import java.util.Calendar;
 
 public class Usuario{
     private static int numOportunidadesPorDefecto = 3;
+    private static int tiempoBloqueadoPorDefecto = 36000000;
 
     private String username;
     private String password;
+    private Date fechaBloqueado;
     private int numOportunidadesLogin = numOportunidadesPorDefecto;
 
-    public Usuario(String username, String password){
+
+    public Usuario(String username, String password, String fechaBloqueado, String oportunidadesLogin) {
         this.username = username;
         setPassword(password);
+
+        try{
+            this.numOportunidadesLogin = Integer.parseInt(oportunidadesLogin);
+        } catch (NumberFormatException e){
+            this.numOportunidadesLogin = 0;
+        }
+
+        if(fechaBloqueado.equals("") || fechaBloqueado.equals("null"))
+            this.fechaBloqueado = null;
+        else
+            this.fechaBloqueado = new Date(fechaBloqueado);
     }
 
-    public void disminuirOportunidadesLogin(){
-        numOportunidadesLogin--;
+    public int disminuirOportunidadesLogin(){
+        return --numOportunidadesLogin;
     }
 
     public void restaurarOportunidadesLogin(){
@@ -23,7 +39,16 @@ public class Usuario{
     }
 
     public boolean isBlocked(){
-        return (0 >= numOportunidadesLogin);
+        boolean tiempoBloqueadoCumplido;
+        if(numOportunidadesLogin <= 0){
+            tiempoBloqueadoCumplido = getTiempoBloqueado() >= tiempoBloqueadoPorDefecto;
+            if (tiempoBloqueadoCumplido) {
+                restaurarOportunidadesLogin();
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     public String getUsername() {
@@ -42,4 +67,51 @@ public class Usuario{
         this.password = EncriptadorAES.encrypt(password, EncriptadorAES.secret);
     }
 
+    public void setFechaBloqueado() {
+        this.fechaBloqueado = Calendar.getInstance().getTime();
+    }
+
+    public long getTiempoBloqueado(){
+        Date now = Calendar.getInstance().getTime();
+        return now.getTime() - fechaBloqueado.getTime();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Usuario other = (Usuario) obj;
+        if (password == null) {
+            if (other.password != null)
+                return false;
+        } else if (!password.equals(other.password))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        return true;
+    }
+
+
+    @Override
+    public String toString() {
+        return username + "," + password + "," + fechaBloqueado + "," + numOportunidadesLogin;
+    }
+
+    
 }

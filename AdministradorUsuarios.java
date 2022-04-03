@@ -10,7 +10,7 @@ public class AdministradorUsuarios {
 
     public boolean autenticarUsuario(String usuario, String contrasena) throws UsuarioInexistenteException{
         Usuario currentUsuario;
-        Usuario usuarioToValidate = new Usuario(usuario, contrasena);
+        Usuario usuarioToValidate = new Usuario(usuario, contrasena, "", "0");
 
         for(int i = 0; i < usuarios.length; i++){
             currentUsuario = usuarios[i];
@@ -21,14 +21,13 @@ public class AdministradorUsuarios {
         return false;
     }
 
-    public void registrarLoginIncorrecto(String usuario){
-        Usuario currentUsuario;
-        for(int i = 0; i < usuarios.length; i++){
-            currentUsuario = usuarios[i];
-            if (currentUsuario.getUsername().equals(usuario)){
-                currentUsuario.disminuirOportunidadesLogin();
-                return;
-            }
+    public void registrarLoginIncorrecto(String usuarioNombre){
+        Usuario usuario = getUsuario(encontrarUsuario(usuarioNombre));
+
+        int oportunidadesRestantes = usuario.disminuirOportunidadesLogin();
+
+        if(oportunidadesRestantes <= 0){
+            usuario.setFechaBloqueado();
         }
     }
 
@@ -48,29 +47,49 @@ public class AdministradorUsuarios {
         for(int i = 0; i < usuarios.length; i++){
             currentUsuario = usuarios[i];
             if (currentUsuario.getUsername().equals(usuario)){
-                return currentUsuario.isBlocked();
+                return true;
             }
         }
         return false;
     }
 
-    public void convertirUsuarioAInfo(){
+/*     public void convertirUsuarioAInfo(){
         System.out.println("holi");
-    }
+    } */
 
     private Usuario[] crearArrayUsuarios(String[][] usuariosInfo){
         Usuario[] usuarios = new Usuario[usuariosInfo.length];
 
         String[] usuarioInfo;
-        String usuarioName, usuarioPassword;
+        String usuarioName, usuarioPassword, usuarioFechaBloqueado,usuarioOportunidadesLogin;
         for (int i = 0; i < usuarios.length; i++){
             usuarioInfo = usuariosInfo[i];
+
             usuarioName = usuarioInfo[0];
             usuarioPassword = usuarioInfo[1];
+            usuarioFechaBloqueado = usuarioInfo[2];
+            usuarioOportunidadesLogin = usuarioInfo[3];
 
-            usuarios[i] = new Usuario(usuarioName, usuarioPassword);
+            usuarios[i] = new Usuario(usuarioName, usuarioPassword, usuarioFechaBloqueado, usuarioOportunidadesLogin);
         }
 
         return usuarios;
+    }
+
+    public int encontrarUsuario(String usuario){
+        Usuario currentUsuario = null;
+
+        for (int i = 0; i < usuarios.length; i++) {
+            currentUsuario = usuarios[i];
+            if (currentUsuario.getUsername().equals(usuario)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public Usuario getUsuario(int index){
+        return usuarios[index];
     }
 }

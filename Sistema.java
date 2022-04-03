@@ -1,9 +1,8 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
 import exceptions.UsuarioInexistenteException;
-import models.Usuario;
-
 public class Sistema{
     private AdministradorUsuarios administradorUsuarios; 
     private ManagerArchivo managerArchivo = new ManagerArchivo();
@@ -17,7 +16,7 @@ public class Sistema{
             esArchivoCorrecto = verificarArchivoUsuario();
             if (esArchivoCorrecto) {
                 cargarUsuarios();
-                mostrarInterfazUsuario();
+                //mostrarInterfazUsuario();
             } else {
                 // Cambiar nombre para que sea correcto
                 alertaArchivoUsuariosNoExiste();
@@ -48,6 +47,18 @@ public class Sistema{
         String contrasena = sc.nextLine();
 
         boolean usuarioValido = verificarUsuarioContra(usuario, contrasena);
+        int infoIndex = administradorUsuarios.encontrarUsuario(usuario);
+        String infoUsuario = administradorUsuarios.getUsuario(infoIndex).toString();
+
+        try {
+            managerArchivo.updateLine(nombreArchivoUsuarios, rutaArchivoUsuarios, administradorUsuarios.encontrarUsuario(usuario), infoUsuario);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (usuarioValido){
+            mostrarInterfazUsuario();
+        }
 
     }
     
@@ -66,8 +77,16 @@ public class Sistema{
         if (!usuarioBloqueado){
             autenticado = administradorUsuarios.autenticarUsuario(usuario, contra);
         } else{
-            alertaUsuarioContraIncorrectos();
+            int userIndex = administradorUsuarios.encontrarUsuario(usuario);
+            long restTime = administradorUsuarios.getUsuario(userIndex).getTiempoBloqueado();
+            restTime = 10 - restTime/60000;
+            alertaUsuarioBloqueado(restTime);
             return false;
+        }
+
+        if(!autenticado){
+            administradorUsuarios.registrarLoginIncorrecto(usuario);
+            alertaUsuarioContraIncorrectos();
         }
 
         return autenticado;
@@ -75,17 +94,34 @@ public class Sistema{
     
     public void mostrarMenu(){
         System.out.println( 
-                "-------------Menú-------------" +
-                "0. Terminar programa" +
-                "1. Capturar calificaciones" +
-                "2. Generar archivo .csv" +
-                "3. Generar archivo .pdf" +
-                "Opcion. "
+                "-------------Menú-------------\n" +
+                "0. Terminar programa\n" +
+                "1. Capturar calificaciones\n" +
+                "2. Generar archivo .csv\n" +
+                "3. Generar archivo .pdf\n" +
+                "Opcion: "
         );
+        
+
     }
     
     private void mostrarInterfazUsuario(){
-
+        while(true){
+            mostrarMenu();
+            Scanner sc = new Scanner(System.in);
+            int response = sc.nextInt();
+            sc.close();
+            switch (response) {
+                case 0:
+                    return;
+                case 1:
+                    System.out.println("Capturando calificaciones");
+                case 2:
+                    System.out.println("Generando .csv");
+                case 3:
+                    System.out.println("Generando .pdf");
+            }
+        }
     }
 
     private void cargarUsuarios(){
@@ -112,8 +148,8 @@ public class Sistema{
         System.out.println("UsuarioContraIncorrectos");
     }
     
-    private void alertaUsuarioBloqueado(){
-        System.out.println("UsuarioBloqueado");
+    private void alertaUsuarioBloqueado(long minutosRestantes){
+        System.out.println("UsuarioBloqueado: " + minutosRestantes + " minutos restantes"); 
     }
 
     public void alertaUsuarioNoExiste(){
