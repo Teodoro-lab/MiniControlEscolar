@@ -1,8 +1,6 @@
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-import exceptions.UsuarioInexistenteException;
 public class Sistema{
     private AdministradorUsuarios administradorUsuarios; 
     private ManagerArchivo managerArchivo = new ManagerArchivo();
@@ -39,7 +37,7 @@ public class Sistema{
         return (existeArchivo && estructuraCorrecta);
     }
     
-    public void ingresarUsuarioContra() throws UsuarioInexistenteException{
+    public boolean ingresarUsuarioContra(){
         Scanner sc = new Scanner(System.in);
         System.out.println("Ingrese su nombre de usuario");
         String usuario = sc.nextLine();
@@ -47,25 +45,10 @@ public class Sistema{
         String contrasena = sc.nextLine();
 
         boolean usuarioValido = verificarUsuarioContra(usuario, contrasena);
-        int infoIndex = administradorUsuarios.encontrarUsuario(usuario);
-
-        if (infoIndex == -1)
-            return;
-
-        String infoUsuario = administradorUsuarios.getUsuario(infoIndex).toString();
-        try {
-            managerArchivo.updateLine(nombreArchivoUsuarios, rutaArchivoUsuarios, administradorUsuarios.encontrarUsuario(usuario), infoUsuario);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        if (usuarioValido){
-            mostrarInterfazUsuario();
-        }
-
+        return usuarioValido;
     }
     
-    public boolean verificarUsuarioContra(String usuario, String contra) throws UsuarioInexistenteException{
+    public boolean verificarUsuarioContra(String usuario, String contra) {
         boolean existeUsuario = administradorUsuarios.existe(usuario);
           
         boolean usuarioBloqueado;
@@ -88,7 +71,8 @@ public class Sistema{
         }
 
         if(!autenticado){
-            administradorUsuarios.registrarLoginIncorrecto(usuario);
+            administradorUsuarios.registrarLoginIncorrecto(usuario, managerArchivo, nombreArchivoUsuarios, 
+                    rutaArchivoUsuarios);
             alertaUsuarioContraIncorrectos();
         }
 
@@ -96,7 +80,7 @@ public class Sistema{
     }
     
     public void mostrarMenu(){
-        System.out.println( 
+        String menu = ( 
                 "-------------Menú-------------\n" +
                 "0. Terminar programa\n" +
                 "1. Capturar calificaciones\n" +
@@ -105,26 +89,36 @@ public class Sistema{
                 "Opcion: "
         );
         
-
-    }
-    
-    private void mostrarInterfazUsuario(){
-        while(true){
-            mostrarMenu();
-            Scanner sc = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.println(menu);
             int response = sc.nextInt();
-            sc.close();
+            sc.nextLine();
             switch (response) {
                 case 0:
                     return;
                 case 1:
                     System.out.println("Capturando calificaciones");
+                    break;
                 case 2:
                     System.out.println("Generando .csv");
+                    break;
                 case 3:
                     System.out.println("Generando .pdf");
+                    break;
             }
         }
+    }
+    
+    public void mostrarInterfazUsuario(){
+        
+        boolean usuarioValido;
+        do{
+            usuarioValido = ingresarUsuarioContra();
+        } while (!usuarioValido);
+
+        mostrarMenu();
+
     }
 
     private void cargarUsuarios(){

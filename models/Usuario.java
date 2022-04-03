@@ -6,7 +6,7 @@ import java.util.Calendar;
 
 public class Usuario{
     private static int numOportunidadesPorDefecto = 3;
-    private static int tiempoBloqueadoPorDefecto = 36000000;
+    private static int tiempoBloqueadoPorDefecto = 600000;
 
     private String username;
     private String password;
@@ -40,16 +40,13 @@ public class Usuario{
     }
 
     public boolean isBlocked(){
-        boolean tiempoBloqueadoCumplido;
-        if(numOportunidadesLogin <= 0){
-            tiempoBloqueadoCumplido = getTiempoBloqueado() >= tiempoBloqueadoPorDefecto;
-            if (tiempoBloqueadoCumplido) {
-                restaurarOportunidadesLogin();
-                return false;
-            }
-            return true;
+        if(numOportunidadesLogin <= 0 && getTiempoBloqueado() >= tiempoBloqueadoPorDefecto){
+            restaurarOportunidadesLogin();
+            return false;     
+        } else if(numOportunidadesLogin > 0){
+            return false;
         }
-        return false;
+        return true;
     }
 
     public String getUsername() {
@@ -74,7 +71,11 @@ public class Usuario{
 
     public long getTiempoBloqueado(){
         Date now = Calendar.getInstance().getTime();
-        return now.getTime() - fechaBloqueado.getTime();
+        try{
+            return now.getTime() - fechaBloqueado.getTime();
+        } catch (NullPointerException e){
+            return 0;
+        }
     }
 
     @Override

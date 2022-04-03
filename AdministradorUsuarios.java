@@ -1,5 +1,6 @@
+import java.io.FileNotFoundException;
+
 import models.Usuario;
-import exceptions.UsuarioInexistenteException;
 
 public class AdministradorUsuarios {
     private Usuario[] usuarios;
@@ -8,7 +9,7 @@ public class AdministradorUsuarios {
         this.usuarios = crearArrayUsuarios(usuarios);
     }
 
-    public boolean autenticarUsuario(String usuario, String contrasena) throws UsuarioInexistenteException{
+    public boolean autenticarUsuario(String usuario, String contrasena) {
         Usuario currentUsuario;
         Usuario usuarioToValidate = new Usuario(usuario, contrasena, "", "0");
         usuarioToValidate.setPassword(contrasena);
@@ -22,13 +23,21 @@ public class AdministradorUsuarios {
         return false;
     }
 
-    public void registrarLoginIncorrecto(String usuarioNombre){
-        Usuario usuario = getUsuario(encontrarUsuario(usuarioNombre));
+    public void registrarLoginIncorrecto(String usuarioNombre, ManagerArchivo archivoManager, String name, String path){
+        int usuarioIndex = encontrarUsuario(usuarioNombre);
+        Usuario usuario = getUsuario(usuarioIndex);
 
         int oportunidadesRestantes = usuario.disminuirOportunidadesLogin();
 
         if(oportunidadesRestantes <= 0){
             usuario.setFechaBloqueado();
+        }
+
+        try {
+            archivoManager.updateLine(name, path,
+                    usuarioIndex, usuario.toString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 

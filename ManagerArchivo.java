@@ -18,10 +18,12 @@ public class ManagerArchivo{
         while ((st = br.readLine()) != null){
             String[] tokens = st.split(separador);
             if (tokens.length != elementos){
+                br.close();
                 return false;
             }
         }
 
+        br.close();
         return true;
     }
 
