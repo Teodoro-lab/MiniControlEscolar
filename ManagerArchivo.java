@@ -71,7 +71,6 @@ public class ManagerArchivo{
         }
 
         String fileContents = buffer.toString();
-        System.out.println("Contents of the file: " + fileContents);
 
         sc.close();
 

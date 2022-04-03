@@ -1,6 +1,7 @@
 import exceptions.UsuarioInexistenteException;
 
 class App {
+    
     public static void main(String[] args) {
         Sistema app = new Sistema();
 

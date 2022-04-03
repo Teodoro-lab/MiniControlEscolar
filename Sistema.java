@@ -48,8 +48,11 @@ public class Sistema{
 
         boolean usuarioValido = verificarUsuarioContra(usuario, contrasena);
         int infoIndex = administradorUsuarios.encontrarUsuario(usuario);
-        String infoUsuario = administradorUsuarios.getUsuario(infoIndex).toString();
 
+        if (infoIndex == -1)
+            return;
+
+        String infoUsuario = administradorUsuarios.getUsuario(infoIndex).toString();
         try {
             managerArchivo.updateLine(nombreArchivoUsuarios, rutaArchivoUsuarios, administradorUsuarios.encontrarUsuario(usuario), infoUsuario);
         } catch (FileNotFoundException e) {

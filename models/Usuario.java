@@ -16,7 +16,8 @@ public class Usuario{
 
     public Usuario(String username, String password, String fechaBloqueado, String oportunidadesLogin) {
         this.username = username;
-        setPassword(password);
+        this.password = password;
+        //setPassword(password);
 
         try{
             this.numOportunidadesLogin = Integer.parseInt(oportunidadesLogin);

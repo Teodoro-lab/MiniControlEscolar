@@ -11,6 +11,7 @@ public class AdministradorUsuarios {
     public boolean autenticarUsuario(String usuario, String contrasena) throws UsuarioInexistenteException{
         Usuario currentUsuario;
         Usuario usuarioToValidate = new Usuario(usuario, contrasena, "", "0");
+        usuarioToValidate.setPassword(contrasena);
 
         for(int i = 0; i < usuarios.length; i++){
             currentUsuario = usuarios[i];
@@ -32,14 +33,9 @@ public class AdministradorUsuarios {
     }
 
     public boolean esUsuarioBloqueado(String usuario){
-        Usuario currentUsuario;
-        for(int i = 0; i < usuarios.length; i++){
-            currentUsuario = usuarios[i];
-            if (currentUsuario.getUsername().equals(usuario)){
-                return currentUsuario.isBlocked();
-            }
-        }
-        return false;
+        int usuarioIndex = encontrarUsuario(usuario);
+        Usuario currentUsuario = getUsuario(usuarioIndex); 
+        return currentUsuario.isBlocked();
     }
 
     public boolean existe(String usuario){
@@ -53,9 +49,6 @@ public class AdministradorUsuarios {
         return false;
     }
 
-/*     public void convertirUsuarioAInfo(){
-        System.out.println("holi");
-    } */
 
     private Usuario[] crearArrayUsuarios(String[][] usuariosInfo){
         Usuario[] usuarios = new Usuario[usuariosInfo.length];
