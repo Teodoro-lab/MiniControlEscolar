@@ -14,7 +14,7 @@ public class Sistema{
             esArchivoCorrecto = verificarArchivoUsuario();
             if (esArchivoCorrecto) {
                 cargarUsuarios();
-                //mostrarInterfazUsuario();
+                mostrarInterfazUsuario();
             } else {
                 // Cambiar nombre para que sea correcto
                 alertaArchivoUsuariosNoExiste();

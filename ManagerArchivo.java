@@ -76,7 +76,8 @@ public class ManagerArchivo{
 
         sc.close();
 
-        fileContents = fileContents.replaceAll(oldLine, info);
+        //fileContents = fileContents.replaceAll(oldLine, info);
+        fileContents = fileContents.replace(oldLine,info);
 
         try {
             FileWriter writer = new FileWriter(filePath);
@@ -86,8 +87,6 @@ public class ManagerArchivo{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-
     }
 
     private long countFileLines(String path, String nombre){
