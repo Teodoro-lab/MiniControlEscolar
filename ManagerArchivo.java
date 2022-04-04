@@ -76,9 +76,7 @@ public class ManagerArchivo{
         System.out.println(fileContents);
         sc.close();
 
-        System.out.println("old" + oldLine + "\nnew" + info);
-        fileContents = fileContents.replaceAll(oldLine, info);
-        System.out.println(fileContents);
+        fileContents = fileContents.replace(oldLine, info);
         
         try {
             FileWriter writer = new FileWriter(filePath);
