@@ -11,7 +11,7 @@ public class AdministradorUsuarios {
 
     public boolean autenticarUsuario(String usuario, String contrasena) {
         Usuario currentUsuario;
-        Usuario usuarioToValidate = new Usuario(usuario, contrasena, "", "0");
+        Usuario usuarioToValidate = new Usuario(usuario, contrasena, "0");
         usuarioToValidate.setPassword(contrasena);
 
         for(int i = 0; i < usuarios.length; i++){
@@ -27,11 +27,7 @@ public class AdministradorUsuarios {
         int usuarioIndex = encontrarUsuario(usuarioNombre);
         Usuario usuario = getUsuario(usuarioIndex);
 
-        int oportunidadesRestantes = usuario.disminuirOportunidadesLogin();
-
-        if(oportunidadesRestantes <= 0){
-            usuario.setFechaBloqueado();
-        }
+        usuario.disminuirOportunidadesLogin();
 
         try {
             archivoManager.updateLine(name, path,
@@ -63,16 +59,15 @@ public class AdministradorUsuarios {
         Usuario[] usuarios = new Usuario[usuariosInfo.length];
 
         String[] usuarioInfo;
-        String usuarioName, usuarioPassword, usuarioFechaBloqueado,usuarioOportunidadesLogin;
+        String usuarioName, usuarioPassword,usuarioOportunidadesLogin;
         for (int i = 0; i < usuarios.length; i++){
             usuarioInfo = usuariosInfo[i];
 
             usuarioName = usuarioInfo[0];
             usuarioPassword = usuarioInfo[1];
-            usuarioFechaBloqueado = usuarioInfo[2];
-            usuarioOportunidadesLogin = usuarioInfo[3];
+            usuarioOportunidadesLogin = usuarioInfo[2];
 
-            usuarios[i] = new Usuario(usuarioName, usuarioPassword, usuarioFechaBloqueado, usuarioOportunidadesLogin);
+            usuarios[i] = new Usuario(usuarioName, usuarioPassword, usuarioOportunidadesLogin);
         }
 
         return usuarios;

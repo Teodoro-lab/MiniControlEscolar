@@ -14,7 +14,7 @@ public class Sistema{
             esArchivoCorrecto = verificarArchivoUsuario();
             if (esArchivoCorrecto) {
                 cargarUsuarios();
-                //mostrarInterfazUsuario();
+                mostrarInterfazUsuario();
             } else {
                 // Cambiar nombre para que sea correcto
                 alertaArchivoUsuariosNoExiste();
@@ -31,7 +31,7 @@ public class Sistema{
         
         //WARNING: está hardcodeado -> arreglar if possible
         boolean estructuraCorrecta = managerArchivo.validarEstructuraArchivo(
-            rutaArchivoUsuarios, nombreArchivoUsuarios, 4, ","
+            rutaArchivoUsuarios, nombreArchivoUsuarios, 3, ","
         );
         
         return (existeArchivo && estructuraCorrecta);
@@ -63,10 +63,7 @@ public class Sistema{
         if (!usuarioBloqueado){
             autenticado = administradorUsuarios.autenticarUsuario(usuario, contra);
         } else{
-            int userIndex = administradorUsuarios.encontrarUsuario(usuario);
-            long restTime = administradorUsuarios.getUsuario(userIndex).getTiempoBloqueado();
-            restTime = 10 - restTime/60000;
-            alertaUsuarioBloqueado(restTime);
+            alertaUsuarioBloqueado();
             return false;
         }
 
@@ -128,7 +125,7 @@ public class Sistema{
             usuariosInfo = managerArchivo.leerArchivoUsuarios(
                 rutaArchivoUsuarios, 
                 nombreArchivoUsuarios,
-                4,
+                3,
                 separator
             );
             administradorUsuarios = new AdministradorUsuarios(usuariosInfo);
@@ -145,8 +142,8 @@ public class Sistema{
         System.out.println("UsuarioContraIncorrectos");
     }
     
-    private void alertaUsuarioBloqueado(long minutosRestantes){
-        System.out.println("UsuarioBloqueado: " + minutosRestantes + " minutos restantes"); 
+    private void alertaUsuarioBloqueado(){
+        System.out.println("UsuarioBloqueado"); 
     }
 
     public void alertaUsuarioNoExiste(){

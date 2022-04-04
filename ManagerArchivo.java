@@ -73,11 +73,13 @@ public class ManagerArchivo{
         }
 
         String fileContents = buffer.toString();
-
+        System.out.println(fileContents);
         sc.close();
 
+        System.out.println("old" + oldLine + "\nnew" + info);
         fileContents = fileContents.replaceAll(oldLine, info);
-
+        System.out.println(fileContents);
+        
         try {
             FileWriter writer = new FileWriter(filePath);
             writer.append(fileContents);

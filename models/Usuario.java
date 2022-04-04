@@ -1,20 +1,15 @@
 package models;
 
 import utils.EncriptadorAES;
-import java.util.Date;
-import java.util.Calendar;
 
 public class Usuario{
     private static int numOportunidadesPorDefecto = 3;
-    private static int tiempoBloqueadoPorDefecto = 600000;
 
     private String username;
     private String password;
-    private Date fechaBloqueado;
     private int numOportunidadesLogin = numOportunidadesPorDefecto;
 
-
-    public Usuario(String username, String password, String fechaBloqueado, String oportunidadesLogin) {
+    public Usuario(String username, String password, String oportunidadesLogin) {
         this.username = username;
         this.password = password;
         //setPassword(password);
@@ -24,29 +19,17 @@ public class Usuario{
         } catch (NumberFormatException e){
             this.numOportunidadesLogin = 0;
         }
-
-        if(fechaBloqueado.equals("") || fechaBloqueado.equals("null"))
-            this.fechaBloqueado = null;
-        else
-            this.fechaBloqueado = new Date(fechaBloqueado);
     }
 
     public int disminuirOportunidadesLogin(){
         return --numOportunidadesLogin;
     }
 
-    public void restaurarOportunidadesLogin(){
-        numOportunidadesLogin = numOportunidadesPorDefecto;
-    }
-
     public boolean isBlocked(){
-        if(numOportunidadesLogin <= 0 && getTiempoBloqueado() >= tiempoBloqueadoPorDefecto){
-            restaurarOportunidadesLogin();
-            return false;     
-        } else if(numOportunidadesLogin > 0){
-            return false;
-        }
-        return true;
+        if(numOportunidadesLogin <= 0 ){
+            return true;     
+        } 
+        return false;
     }
 
     public String getUsername() {
@@ -65,18 +48,6 @@ public class Usuario{
         this.password = EncriptadorAES.encrypt(password, EncriptadorAES.secret);
     }
 
-    public void setFechaBloqueado() {
-        this.fechaBloqueado = Calendar.getInstance().getTime();
-    }
-
-    public long getTiempoBloqueado(){
-        Date now = Calendar.getInstance().getTime();
-        try{
-            return now.getTime() - fechaBloqueado.getTime();
-        } catch (NullPointerException e){
-            return 0;
-        }
-    }
 
     @Override
     public int hashCode() {
@@ -112,7 +83,7 @@ public class Usuario{
 
     @Override
     public String toString() {
-        return username + "," + password + "," + fechaBloqueado + "," + numOportunidadesLogin;
+        return username + "," + password + "," + numOportunidadesLogin;
     }
 
     
